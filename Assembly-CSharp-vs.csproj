@@ -45,8 +45,12 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Camera\MouseOrbit.cs" />
-     <Compile Include="Assets\Scripts\TelemetryPlotter.cs" />
-     <Compile Include="Assets\Scripts\ThunderbirdTelemetry.cs" />
+     <Compile Include="Assets\Scripts\GUI\TelemetryOutput.cs" />
+     <Compile Include="Assets\Scripts\Rocket\TelemetryTransformer.cs" />
+     <Compile Include="Assets\Scripts\Telemetry\TelemetryPlotter.cs" />
+     <Compile Include="Assets\Scripts\Telemetry\TelemetryProvider.cs" />
+     <Compile Include="Assets\Scripts\Telemetry\TelemetryReceiverListener.cs" />
+     <Compile Include="Assets\Scripts\Telemetry\ThunderbirdTelemetry.cs" />
      <Compile Include="Assets\Scripts\ThunderbirdTmUdpReceiver.cs" />
      <None Include="Assets\Standard Assets\Water (Basic)\Sources\Shaders\FX-Water Simple.shader" />
      <None Include="Assets\Standard Assets\Skyboxes\_skybox info.txt" />

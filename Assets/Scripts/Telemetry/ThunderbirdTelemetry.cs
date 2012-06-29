@@ -1,14 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-namespace org.hbird.application.thunderbirdviewer {
-
-public class ThunderbirdTelemetry : MonoBehaviour {
-
-	private string headingName;
-	private string pitchName;
-	private string rollName;
-}
+namespace org.hbird.application.thunderbirdviewer.tm {
 	
 public class HummingbirdParameter {
 		

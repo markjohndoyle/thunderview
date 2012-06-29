@@ -5,12 +5,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Collections.Generic;
 
 using LitJson;
 
-using org.hbird.application.thunderbirdviewer;
+using org.hbird.application.thunderbirdviewer.tm;
 
-public class ThunderbirdTmUdpReceiver : MonoBehaviour {
+public class ThunderbirdTmUdpReceiver : MonoBehaviour, TelemetryProvider {
 	public String host = "localhost";
 	public int port = 15478;
 
@@ -19,18 +20,10 @@ public class ThunderbirdTmUdpReceiver : MonoBehaviour {
 	private Thread receiveThread;
 	private bool running;
 	
-	private float pitch;
-	private float roll;
-	private float heading;
+	private IList<TelemetryReceiverListener> listeners = new List<TelemetryReceiverListener>();
 
 	// Use this for initialization
 	void Start () {
-		
-		// Set target rotation angles to the position the object is created at to prevent unwanted initial rotation.
-		roll = transform.position.x;
-		pitch = transform.position.y;
-		heading = transform.position.z;
-		
     	try{
 			Debug.Log("Setting up UDP");
 			udpClient = new UdpClient(port);
@@ -64,8 +57,7 @@ public class ThunderbirdTmUdpReceiver : MonoBehaviour {
 					}
 					
 					HummingbirdParameter telemetry = JsonMapper.ToObject<HummingbirdParameter>(returnData);
-					
-					processTelemetryParameter(telemetry);
+					updateListeners(telemetry);
 				}
 				else {
 					Debug.LogWarning("Empty UDP payload");
@@ -77,48 +69,30 @@ public class ThunderbirdTmUdpReceiver : MonoBehaviour {
 		}
 	}
 	
-	private void processTelemetryParameter(HummingbirdParameter p) {
-		switch(p.name) {
-		case "IMU_Pitch":
-			this.pitch = p.value;
-			break;
-		case "IMU_Roll":
-			this.roll = p.value;
-			break;
-		case "IMU_Heading":
-			this.heading = p.value;
-			break;
-		default:
-			Debug.LogWarning("Unexpected telemetry parameter; ignoring");
-			break;
+	private void updateListeners(HummingbirdParameter telemetry) {
+		if(listeners.Count > 0) {
+			foreach(TelemetryReceiverListener l in listeners) {
+				l.telemetryReceived(telemetry);
+			}
 		}
 	}
 	
 	// Update is called once per frame
-//	void Update () {
-	void FixedUpdate() {
-		float tgtRoll = transform.position.x;
-		float tgtPitch = transform.position.y;
-		float tgtHeading = transform.position.z;
-		
-		tgtRoll = roll - tgtRoll;
-		tgtPitch = pitch - tgtPitch;
-		tgtHeading = heading - tgtHeading;
-		
-//		Debug.Log("(" + tgtRoll + ", " + tgtPitch + ", " + tgtHeading + ")");
-		
-//		Vector3 targetAtitude = new Vector3(roll, pitch, heading);
-		
-		roll = transform.position.x;
-		pitch = transform.position.y;
-		heading = transform.position.z;
-		
-		transform.Rotate(tgtRoll, tgtPitch, tgtHeading);
+	void Update () {
 	}
 	
 	void OnDestroy() {
 		Debug.Log("Stopping thread and closing UDP socket");
 		running = false;
 		udpClient.Close();
+	}
+		
+	public void registerForTelemeytryUpdates(TelemetryReceiverListener l) {
+		Debug.Log("Adding telemetry listener");
+		this.listeners.Add(l);
+	}
+		
+	public void unregisterForTelemeytryUpdates(TelemetryReceiverListener l) {
+		this.listeners.Remove(l);
 	}
 }
