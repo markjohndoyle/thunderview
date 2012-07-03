@@ -63,6 +63,14 @@ public class ThunderbirdTmUdpReceiver : MonoBehaviour, TelemetryProvider {
 					Debug.LogWarning("Empty UDP payload");
 				}
 			}
+			catch(SocketException sockE) {
+				if(running) {
+					Debug.LogError(sockE.ToString());
+				}
+				else {
+					Debug.Log("Socket closed");
+				}
+			}
 			catch (Exception e ) {
 				Debug.LogError(e.ToString());
         	}

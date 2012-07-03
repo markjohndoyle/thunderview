@@ -15,7 +15,7 @@ public class TelemetryOutput : MonoBehaviour, TelemetryReceiverListener {
 	void Start () {
 		TelemetryProvider tmProvider = GameObject.Find("TelemetryReceiver").GetComponent<ThunderbirdTmUdpReceiver>();
 		tmProvider.registerForTelemeytryUpdates(this);
-		guiText.text = "Pitch = No telemetry";
+		guiText.text = "No telemetry";
 	}
 	
 	// Update is called once per frame
@@ -25,7 +25,7 @@ public class TelemetryOutput : MonoBehaviour, TelemetryReceiverListener {
 			processTelemetryParameter(tm);
 		}
 //		Debug.Log(pitch);
-		guiText.text = "Pitch = " + this.pitch;
+		guiText.text = "Roll, Heading, Pitch = (" + roll + "," + heading + "," + pitch + ")";
 	}
 		
 	public void telemetryReceived(HummingbirdParameter tm) {
